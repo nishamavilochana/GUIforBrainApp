@@ -22,6 +22,7 @@ using FireSharp.Config;
 using FireSharp;
 using Newtonsoft.Json;
 using System.Timers;
+using System.Diagnostics;
 
 namespace GUIforBrainApp
 {
@@ -130,15 +131,15 @@ namespace GUIforBrainApp
         void serialDataRead()
         {
             serialPort = new SerialPort(availablePorts_box.Text, Convert.ToInt32(baudrate_box.Text));
+            //serialPort = new SerialPort(availablePorts_box.Text, 115200);
             serialPort.DataReceived += SerialPort_DataReceived; serialPort.Open();
         }
         private void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-
             string data = serialPort.ReadLine();
             apstin.Add(data);
             string[] words = data.Split(',');
-            if (words.Length == 16)
+            if (words.Length >= 16)
             {
                 for (int k = 0; k < 16; k++)
                 {
@@ -523,14 +524,14 @@ namespace GUIforBrainApp
         private void button2_Click(object sender, EventArgs e)
         {
             string Todaysdate = DateTime.Now.ToString("-dd-MM-yyyy-(hh-mm-ss)");
-            //Directory.CreateDirectory("C:\\BRAIN GUI");
-            //FileStream fs = new FileStream(FILE_NAME, FileMode.CreateNew)
-            string filepaths = "D:/BrainSignal_Analysis/Captured Data/" + DateTime.Now.ToString("-dd-MM-yyyy-(hh-mm-ss)");
-            System.IO.File.AppendAllLines(filepaths + "_Raw Dataset.txt", apstin);
+            string subDirectoryPath = Path.Combine(richTextBox2.Text, Todaysdate,"Raw_Dataset.txt");
+            Directory.CreateDirectory(subDirectoryPath);
+            string filepaths = DateTime.Now.ToString("-dd-MM-yyyy-(hh-mm-ss)");
+            System.IO.File.AppendAllLines(subDirectoryPath+ ".txt",apstin);
             for (int i = 1; i < 18; i++)
             {
 
-                string filePath = filepaths + "Channel" + i + "chart.png";
+                string filePath = subDirectoryPath + "Channel" + i + "chart.png";
                 ChartImageFormat format = ChartImageFormat.Png;
                 switch (i)
                 {
@@ -590,10 +591,14 @@ namespace GUIforBrainApp
                 }
 
             }
+            Directory.Delete(subDirectoryPath, true);
             MessageBox.Show("Successfully Saved 18 Images and RAW Dataset!");
         }
 
-
+        private void OpenDirectory(string directoryPath)
+        {
+            Process.Start("explorer.exe", directoryPath);
+        }
         int cunt = 0; private CancellationTokenSource cancellationTokenSource;
         private async void button3_Click(object sender, EventArgs e)
         {
@@ -1295,6 +1300,23 @@ namespace GUIforBrainApp
                 chart18.Refresh();
             }
         }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            using (FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog())
+            {
+                DialogResult result = folderBrowserDialog.ShowDialog();
+
+                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
+                {
+                    string selectedFolder = folderBrowserDialog.SelectedPath;
+                    richTextBox2.Clear();
+                    richTextBox2.AppendText(selectedFolder);
+                    Cursor = Cursors.WaitCursor; Thread.Sleep(100); Cursor = Cursors.Default;
+                }
+            }
+        }
+
     }
     }
     
