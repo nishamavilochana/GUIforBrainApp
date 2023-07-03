@@ -28,7 +28,7 @@ namespace GUIforBrainApp
 {
     public partial class Form1 : Form
     {
-        private SerialPort serialPort; int counter = 0; int dataCount;
+        private SerialPort serialPort; int counter = 0; int dataCount; private Thread closingThread;
         public Form1()
         {
             InitializeComponent();
@@ -36,7 +36,6 @@ namespace GUIforBrainApp
             chartallContrib();
             chart1dash();
             serialCom();
-            //chartsizes();
         }
         void connectestablish()
         {
@@ -130,18 +129,47 @@ namespace GUIforBrainApp
 
         void serialDataRead()
         {
+            serialPort = new SerialPort(availablePorts_box.Text, Convert.ToInt32(baudrate_box.Text)); serialPort.Open();
+            serialPort.DataReceived += SerialPort_DataReceived; 
+        }
+        void serialDataReadClose()
+        {
             serialPort = new SerialPort(availablePorts_box.Text, Convert.ToInt32(baudrate_box.Text));
-            //serialPort = new SerialPort(availablePorts_box.Text, 115200);
-            serialPort.DataReceived += SerialPort_DataReceived; serialPort.Open();
+            //serialPort.DataReceived += SerialPort_DataReceived; //serialPort.Open();
+            serialPort.Close();
         }
         private void SerialPort_DataReceived(object sender, SerialDataReceivedEventArgs e)
         {
-            string data = serialPort.ReadLine();
-            apstin.Add(data);
-            string[] words = data.Split(',');
-            if (words.Length >= 16)
+            try
             {
-                for (int k = 0; k < 16; k++)
+                string data = serialPort.ReadLine();
+                apstin.Add(data);
+                //for 16 channels
+                string[] words = data.Split(',');
+                if (words.Length >= 16)
+                {
+                    for (int k = 0; k < 16; k++)
+                    {
+                        Invoke(new Action(() => UpdateTextBox(words[k])));
+                        Invoke(new Action(() => UpdateChart(words[k], k + 1)));
+                    }
+                }
+                else
+                {
+                    Console.Write("Bruh!");
+                }
+            }
+            catch
+            {
+                Console.WriteLine("Bruh");
+            }
+            
+            //for 8 channels
+            /*
+            string[] words = data.Split(','); 
+             if (words.Length >= 8)
+            {
+                for (int k = 0; k < 8; k++)
                 {
                     Invoke(new Action(() => UpdateTextBox(words[k])));
                     Invoke(new Action(() => UpdateChart(words[k], k + 1)));
@@ -151,6 +179,15 @@ namespace GUIforBrainApp
             {
                 Console.Write("Bruh!");
             }
+             */
+            //For 1 channel
+            
+            /*
+             Invoke(new Action(() => UpdateTextBox(data)));
+             Invoke(new Action(() => UpdateChart(data, 1)));
+            */
+             
+
         }
         List<string> apstin = new List<string>();
         int jk = 0;
@@ -489,7 +526,12 @@ namespace GUIforBrainApp
             }
             else
             {
-                counter = 0; serialPort.Close(); button1.Text = "Connect";
+                counter = 0;
+                Cursor = Cursors.WaitCursor;
+                closingThread = new Thread(closeSerial);
+                closingThread.Start();
+                Cursor = Cursors.Default;
+                button1.Text = "Connect";
             }
 
 
@@ -499,6 +541,10 @@ namespace GUIforBrainApp
         {
 
 
+        }
+        private void closeSerial()
+        {
+            serialPort.Close();
         }
 
         protected override void OnFormClosing(FormClosingEventArgs e)
