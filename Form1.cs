@@ -26,7 +26,7 @@ using System.Diagnostics;
 
 namespace GUIforBrainApp
 {
-    public partial class Form1 : Form
+    public partial class Form1 : MetroFramework.Forms.MetroForm
     {
         private SerialPort serialPort; int counter = 0; int dataCount; private Thread closingThread;
         public Form1()
@@ -1365,6 +1365,10 @@ namespace GUIforBrainApp
             }
         }
 
+        private void button9_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
     }
     

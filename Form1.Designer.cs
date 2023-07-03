@@ -117,6 +117,7 @@
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.button9 = new System.Windows.Forms.Button();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.chart17)).BeginInit();
@@ -502,6 +503,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.button9);
             this.groupBox1.Controls.Add(this.button7);
             this.groupBox1.Controls.Add(this.button4);
             this.groupBox1.Controls.Add(this.button3);
@@ -769,6 +771,16 @@
             // 
             this.openFileDialog1.FileName = "openFileDialog1";
             // 
+            // button9
+            // 
+            this.button9.Location = new System.Drawing.Point(303, 48);
+            this.button9.Name = "button9";
+            this.button9.Size = new System.Drawing.Size(98, 26);
+            this.button9.TabIndex = 11;
+            this.button9.Text = "button9";
+            this.button9.UseVisualStyleBackColor = true;
+            this.button9.Click += new System.EventHandler(this.button9_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -868,6 +880,7 @@
         private System.Windows.Forms.Button button8;
         private System.Windows.Forms.RichTextBox richTextBox2;
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
+        private System.Windows.Forms.Button button9;
     }
 }
 
