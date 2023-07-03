@@ -142,7 +142,7 @@ namespace GUIforBrainApp
         {
             try
             {
-                string data = serialPort.ReadLine();
+                /*string data = serialPort.ReadLine();
                 apstin.Add(data);
                 //for 16 channels
                 string[] words = data.Split(',');
@@ -157,35 +157,37 @@ namespace GUIforBrainApp
                 else
                 {
                     Console.Write("Bruh!");
+                }*/
+                //for 8 channels
+                string data = serialPort.ReadLine();
+                apstin.Add(data);
+                string[] words = data.Split(','); 
+                 if (words.Length >= 6)
+                {
+                    for (int k = 0; k < 6; k++)
+                    {
+                        Invoke(new Action(() => UpdateTextBox(words[k])));
+                        Invoke(new Action(() => UpdateChart(words[k], k + 1)));
+                    }
                 }
+                else
+                {
+                    Console.Write("Bruh!");
+                }
+                 
+                //For 1 channel
+
+                /*
+                 Invoke(new Action(() => UpdateTextBox(data)));
+                 Invoke(new Action(() => UpdateChart(data, 1)));
+                */
             }
             catch
             {
                 Console.WriteLine("Bruh");
             }
             
-            //for 8 channels
-            /*
-            string[] words = data.Split(','); 
-             if (words.Length >= 8)
-            {
-                for (int k = 0; k < 8; k++)
-                {
-                    Invoke(new Action(() => UpdateTextBox(words[k])));
-                    Invoke(new Action(() => UpdateChart(words[k], k + 1)));
-                }
-            }
-            else
-            {
-                Console.Write("Bruh!");
-            }
-             */
-            //For 1 channel
             
-            /*
-             Invoke(new Action(() => UpdateTextBox(data)));
-             Invoke(new Action(() => UpdateChart(data, 1)));
-            */
              
 
         }
